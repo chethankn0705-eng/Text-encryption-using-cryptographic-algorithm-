@@ -1,0 +1,75 @@
+# ============================================
+# TEXT ENCRYPTION & DECRYPTION USING AES
+# ============================================
+
+from cryptography.fernet import Fernet
+import os
+
+# --------------------------------------------
+# Function to generate and save key
+# --------------------------------------------
+def generate_key():
+    key = Fernet.generate_key()
+    with open("secret.key", "wb") as key_file:
+        key_file.write(key)
+    print("Encryption key generated and saved as 'secret.key'.")
+
+# --------------------------------------------
+# Function to load existing key
+# --------------------------------------------
+def load_key():
+    return open("secret.key", "rb").read()
+
+# --------------------------------------------
+# Function to encrypt text
+# --------------------------------------------
+def encrypt_text(text, key):
+    cipher = Fernet(key)
+    encrypted_text = cipher.encrypt(text.encode())
+    return encrypted_text
+
+# --------------------------------------------
+# Function to decrypt text
+# --------------------------------------------
+def decrypt_text(encrypted_text, key):
+    cipher = Fernet(key)
+    decrypted_text = cipher.decrypt(encrypted_text).decode()
+    return decrypted_text
+
+# --------------------------------------------
+# Main Program
+# --------------------------------------------
+def main():
+    # Check if key exists, if not create one
+    if not os.path.exists("secret.key"):
+        generate_key()
+
+    key = load_key()
+
+    print("\n===== TEXT ENCRYPTION PROGRAM =====")
+    print("1. Encrypt Text")
+    print("2. Decrypt Text")
+
+    choice = input("Enter your choice (1 or 2): ")
+
+    if choice == "1":
+        user_text = input("Enter text to encrypt: ")
+        encrypted = encrypt_text(user_text, key)
+        print("\nEncrypted Text:")
+        print(encrypted.decode())
+
+    elif choice == "2":
+        user_encrypted = input("Enter text to decrypt: ")
+        try:
+            decrypted = decrypt_text(user_encrypted.encode(), key)
+            print("\nDecrypted Text:")
+            print(decrypted)
+        except Exception as e:
+            print("Error: Invalid encrypted text or key.")
+
+    else:
+        print("Invalid choice!")
+
+# Run the program
+if __name__ == "__main__":
+    main()
